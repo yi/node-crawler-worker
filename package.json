@@ -22,7 +22,7 @@
   ],
   "main": "lib/crawler-worker",
   "bin": {
-    "texture-info": "./bin/texture-info.coffee"
+    "crawler-worker": "./lib/crawler-worker.js"
   },
   "engines": {
     "node": ">= 0.8.0"
