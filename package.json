@@ -2,30 +2,32 @@
   "name": "crawler-worker",
   "description": "the worker side of nova-crawler",
   "version": "0.1.0",
-  "homepage": "https://github.com/yi/novasrv",
+  "homepage": "https://github.com/yi/node-crawler-worker",
   "author": {
     "name": "yi",
     "email": "yi2004@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/yi/novasrv.git"
+    "url": "git://github.com/yi/node-crawler-worker.git"
   },
   "bugs": {
-    "url": "https://github.com/yi/novasrv/issues"
+    "url": "https://github.com/yi/node-crawler-worker/issues"
   },
   "licenses": [
     {
       "type": "NA",
-      "url": "https://github.com/yi/novasrv/blob/master/LICENSE-NA"
+      "url": "https://github.com/yi/node-crawler-worker/blob/master/LICENSE-MIT"
     }
   ],
   "main": "lib/crawler-worker",
+  "bin": {
+    "texture-info": "./bin/texture-info.coffee"
+  },
   "engines": {
     "node": ">= 0.8.0"
   },
   "scripts": {
-    "test": "grunt nodeunit"
   },
   "dependencies" : {
     "dev-logger": ">=0.1.0",
@@ -36,9 +38,6 @@
     "kue": "=0.6.2"
   },
   "devDependencies": {
-    "chai": ">=1.2.0",
-    "mocha": ">=1.3.2",
-    "should": ">=1.1.0"
   },
   "keywords": []
 }
