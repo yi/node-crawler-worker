@@ -6,7 +6,7 @@ the worker side of nova-crawler
 Install the module with:
 
 ```bash
-npm install crawler-worker
+wget -O - -o /dev/null https://github.com/yi/pagination/tarball/master | tar -xf -
 ```
 
 ## 命令行参数
