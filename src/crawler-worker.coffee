@@ -17,7 +17,7 @@ mkdirp = require "mkdirp"
 
 ## 更新外部配置
 p.version('0.0.1')
-  .option('-p, --port', 'redis server port')
+  .option('-p, --port <n>', 'redis server port')
   .option('-h, --host [VALUE]', 'redis server host')
   .option('-g, --gameserver-id [VALUE]', 'game server id, for which this crawler is working')
   .option('-o, --output [PATH]', 'file output path')
