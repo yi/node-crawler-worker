@@ -6,7 +6,7 @@ the worker side of nova-crawler
 Install the module with:
 
 ```bash
-wget -O - -o /dev/null https://github.com/yi/pagination/tarball/master | tar -xf -
+wget -O - -o /dev/null https://github.com/yi/node-crawler-worker/tarball/master | tar -xzf -
 ```
 
 ## 命令行参数
