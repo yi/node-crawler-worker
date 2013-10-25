@@ -99,9 +99,9 @@ jobs.process "#{p.gameserverId}-write-html", (job, done) ->
     done()
 
     # remove the job when it completed
-    job.remove (err)->
-      if err?
-        logger.warn "[crawler-worker::on::write-html] #{err}"
+    #job.remove (err)->
+      #if err?
+        #logger.warn "[crawler-worker::on::write-html] #{err}"
 
     return
 
