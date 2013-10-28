@@ -40,7 +40,20 @@ unless fs.existsSync(p.output)
 
 kue.redis.createClient = ->
   #console.log "[crawler-worker::kue::createClient] host:#{p.host}, port:#{p.port}"
-  client = redis.createClient(p.port, p.host)
+  client = redis.createClient(p.port, p.host, {"retry_max_delay":3000})
+
+  client.on "error",  (error) ->
+    console.error "[redis.on_error] #{error}"
+
+  client.on "end", ->
+    console.warn "[db.on_end]"
+
+  client.on "ready", ->
+    console.info "[db] redis client is ready to server."
+
+  client.on "reconnecting", (info) ->
+    console.info "[db] redis client is reconnecting to datastore:#{p.host}:#{p.port}... delay:#{info.delay}, attempt:#{info.attempt}"
+
   return client
 
 jobs = kue.createQueue()
@@ -103,7 +116,15 @@ jobs.process "#{p.gameserverId}-write-html", (job, done) ->
       #if err?
         #logger.warn "[crawler-worker::on::write-html] #{err}"
 
+    # NOTE:
+    #   猜测
+    # ty 2013-10-25
+
+
     return
+
+# Prevent master process to exit on uncaught exception
+process.on 'uncaughtException', (error) -> console.log "[crawler-worker::uncaughtException] #{error}, stack:#{error.stack}"
 
 
 console.log "======================== Starting NovaCrawler::Worker ========================"
