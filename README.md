@@ -14,6 +14,11 @@ Launch with forever
 ./forever-start-crawler.sh && tail -fn 1000 worker/log/crawler-worker.log 
 ```
 
+And make sure only one crawler instance is up after launching:
+```bash
+forever list | grep crawler
+```
+
 ## 命令行参数
 
 * -g 爬虫的所服务于的 game server 的 server id
