@@ -6,7 +6,12 @@ the worker side of nova-crawler
 Install the module with:
 
 ```bash
-mkdir -p ./worker && wget -O - -o /dev/null https://github.com/yi/node-crawler-worker/tarball/master | tar -xvz -C ./worker --strip-components 1 -f -
+rm -rf worker/log/crawler-worker.log  && mkdir -p ./worker && wget -O - -o /dev/null https://github.com/yi/node-crawler-worker/tarball/master | tar -xvz -C ./worker --strip-components 1 -f -
+```
+
+Launch with forever
+```bash
+./forever-start-crawler.sh && tail -fn 1000 worker/log/crawler-worker.log 
 ```
 
 ## 命令行参数
