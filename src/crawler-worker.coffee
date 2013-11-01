@@ -17,7 +17,7 @@ mkdirp = require "mkdirp"
 
 ## 更新外部配置
 p.version('0.0.1')
-  .option('-p, --port <n>', 'redis server port')
+  .option('-p, --port', 'redis server port')
   .option('-h, --host [VALUE]', 'redis server host')
   .option('-g, --gameserver-id [VALUE]', 'game server id, for which this crawler is working')
   .option('-o, --output [PATH]', 'file output path')
@@ -40,23 +40,37 @@ unless fs.existsSync(p.output)
 
 kue.redis.createClient = ->
   #console.log "[crawler-worker::kue::createClient] host:#{p.host}, port:#{p.port}"
-  client = redis.createClient(p.port, p.host, {"retry_max_delay":3000})
-
-  client.on "error",  (error) ->
-    console.error "[redis.on_error] #{error}"
-
-  client.on "end", ->
-    console.warn "[db.on_end]"
-
-  client.on "ready", ->
-    console.info "[db] redis client is ready to server."
-
-  client.on "reconnecting", (info) ->
-    console.info "[db] redis client is reconnecting to datastore:#{p.host}:#{p.port}... delay:#{info.delay}, attempt:#{info.attempt}"
-
+  client = redis.createClient(p.port, p.host)
   return client
 
 jobs = kue.createQueue()
+
+LocalRedisClient = redis.createClient p.port,p.host
+
+jobs.process "#{p.ameserverId}-mars-data", (job, done) ->
+  logger.log "[crawler-worker::on::mars-data]"
+
+  data = job.data
+  guid = parseInt(data.guid)
+  name = data.name
+  score = data.score
+
+  unless guid? and isNaN(guid) and guid>0
+    logger.error "[crawler-worker::on::mars-data] mars guid:#{guid} name:#{name} score:#{score}"
+    done "mars guid is error。guid:#{guid}"
+    return
+
+  SET_DATA = ['mars', 'new_id', guid, 'new_name', name, 'new_js', score]
+  if LocalRedisClient?
+    LocalRedisClient.HMSET SET_DATA, (err)->
+      logger.error "[crawler-worker::on::mars-data] set redis mars data is error:#{err}" if err?
+      done()
+
+      job.remove (error) ->
+        logger.warn "[crawler-worker::on::mars-data] #{error}"
+
+      return
+
 
 # monitor job queue
 jobs.process "#{p.gameserverId}-write-html", (job, done) ->
@@ -112,19 +126,11 @@ jobs.process "#{p.gameserverId}-write-html", (job, done) ->
     done()
 
     # remove the job when it completed
-    #job.remove (err)->
-      #if err?
-        #logger.warn "[crawler-worker::on::write-html] #{err}"
-
-    # NOTE:
-    #   猜测
-    # ty 2013-10-25
-
+    job.remove (err)->
+      if err?
+        logger.warn "[crawler-worker::on::write-html] #{err}"
 
     return
-
-# Prevent master process to exit on uncaught exception
-process.on 'uncaughtException', (error) -> console.log "[crawler-worker::uncaughtException] #{error}, stack:#{error.stack}"
 
 
 console.log "======================== Starting NovaCrawler::Worker ========================"
